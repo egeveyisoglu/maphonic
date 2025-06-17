@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maphonic | Explore Map</title>
+  <!-- Mapbox CSS -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <!-- Mapbox Geocoder CSS -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" rel="stylesheet" />
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <style>
+    :root {
+      --nav-bg: rgba(20, 30, 60, 0.85);
+      --nav-bg-mobile: rgba(20, 30, 60, 0.95);
+      --color-white: #ffffff;
+      --color-blue-start: #1e90ff;
+      --color-blue-end: #00b7eb;
+      --button-gradient-start: #1e90ff;
+      --button-gradient-end: #00b7eb;
+      --button-hover-start: #187bcd;
+      --button-hover-end: #009fd9;
+      --font-family-default: "Nunito", sans-serif;
+      --section-bg-gradient: linear-gradient(135deg, #f5f8ff, #e8f0ff);
+      --panel-bg: linear-gradient(145deg, #ffffff, #f9fafb);
+      --footer-bg: linear-gradient(135deg, #141e3c, #1a2a5a);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-appearance: none;
+    }
+
+        /* Rubik Font Tanımları */
+    @font-face {
+      font-family: 'Rubik';
+      src: url('assets/fonts/Rubik-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      src: url('assets/fonts/Rubik-Medium.ttf') format('truetype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      src: url('assets/fonts/Rubik-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* Nunito Font Tanımları */
+    @font-face {
+      font-family: 'Nunito';
+      src: url('assets/fonts/Nunito-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Nunito';
+      src: url('assets/fonts/Nunito-Medium.ttf') format('truetype');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Nunito';
+      src: url('assets/fonts/Nunito-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      font-family: var(--font-family-default);
+      background-color: #f7f9f4;
+      overflow-x: hidden;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    ul { list-style: none; }
+
+    button, input[type="submit"] {
+      cursor: pointer;
+      font-family: var(--font-family-default);
+      border: none;
+      outline: none;
+      background: none;
+    }
+
+    [data-animate] {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    [data-animate].visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 70px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-logo img {
+      height: 45px;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-logo img:hover { transform: scale(1.1); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 20px;
+      background: transparent;
+      cursor: pointer;
+      position: absolute;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1001;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 100%;
+      height: 3px;
+      background: var(--color-white);
+      border-radius: 3px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(1) {
+      transform: translateY(8.5px) rotate(45deg);
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(3) {
+      transform: translateY(-8.5px) rotate(-45deg);
+    }
+
+    @media (min-width: 769px) {
+      .nav-links {
+        display: flex;
+        flex: 1;
+        justify-content: space-evenly;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .nav-links a {
+        position: relative;
+        color: var(--color-white);
+        font-size: 1rem;
+        padding: 0.5rem 0;
+        transition: color 0.3s ease;
+      }
+
+      .nav-links a:hover, .nav-links a.active {
+        color: var(--color-blue-start);
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -4px;
+        width: 0;
+        height: 2px;
+        background: var(--color-blue-start);
+        transition: width 0.3s ease, left 0.3s ease;
+      }
+
+      .nav-links a:hover::after, .nav-links a.active::after {
+        left: 0;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 70px;
+        right: 0;
+        width: 250px;
+        height: calc(100vh - 70px);
+        background: var(--nav-bg-mobile);
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 2rem;
+        padding-top: 3rem;
+        transform: translateX(100%);
+        transition: transform 0.4s ease;
+        z-index: 999;
+      }
+
+      .nav-links.open {
+        transform: translateX(0);
+      }
+
+      .nav-links li {
+        width: 100%;
+        text-align: center;
+      }
+
+      .nav-links a {
+        font-size: 1.2rem;
+        color: var(--color-white);
+        display: block;
+        padding: 0.5rem;
+        text-align: center;
+      }
+
+      .nav-links a:hover, .nav-links a.active {
+        color: var(--color-blue-start);
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav { padding: 0 1rem; }
+      .hamburger { right: 1rem; }
+      .nav-links { width: 200px; }
+      .nav-links a { font-size: 1rem; }
+    }
+
+    .wrapper {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content {
+      flex-grow: 1;
+    }
+
+    #toggleLabelsBtn {
+      position: absolute;
+      top: 100px;
+      left: 1rem;
+      z-index: 15;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      padding: 0.5rem 1rem;
+      background-color: #00ADB5;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease, border 0.2s ease;
+    }
+
+    #toggleLabelsBtn.outline {
+      background-color: transparent;
+      color: #00ADB5;
+      border: 1px solid #00ADB5;
+    }
+
+    #toggleLabelsBtn:hover {
+      background-color: #008c92;
+    }
+
+    #toggleLabelsBtn.outline:hover {
+      background-color: rgba(0, 173, 181, 0.1);
+    }
+
+    #container {
+      display: flex;
+      flex-grow: 1;
+      width: 100%;
+      height: calc(100vh - 70px);
+      margin-top: 70px;
+      position: relative;
+    }
+
+    #map {
+      flex-grow: 1;
+      width: 100%;
+      transition: width 0.4s ease;
+    }
+
+    #map.shrink {
+      width: calc(100% - min(400px, 40vw));
+    }
+
+    #infoPanel {
+      width: min(400px, 40vw);
+      background: var(--panel-bg);
+      box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+      padding: clamp(1.5rem, 3vw, 2rem);
+      box-sizing: border-box;
+      overflow-y: auto;
+      transform: translateX(100%);
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.35s ease, opacity 0.35s ease;
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      border-left: 1px solid #e5e7eb;
+      border-radius: 12px 0 0 12px;
+    }
+
+    #infoPanel.visible {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    #panelHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: clamp(0.8rem, 2vw, 1rem);
+      position: relative;
+    }
+
+    #panelHeader h2 {
+      margin: 0;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      font-weight: 600;
+      color: #1f2937;
+      line-height: 1.2;
+      align-self: center;
+      flex-grow: 1;
+      padding-right: 40px;
+    }
+
+    #closeBtn {
+      background: #00ADB5;
+      color: white;
+      font-size: 1rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease, transform 0.2s ease;
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      align-self: center;
+    }
+
+    #closeBtn:hover {
+      background: #008c92;
+      transform: scale(1.1) translateY(-50%);
+    }
+
+    #closeBtn::before {
+      content: '×';
+      font-weight: bold;
+    }
+
+    .section-title {
+      font-size: clamp(1rem, 2.5vw, 1.1rem);
+      color: #1f2937;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .gallery-container {
+      position: relative;
+      margin-bottom: clamp(0.8rem, 2vw, 1rem);
+      background: #ffffff;
+      padding: 0.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      min-height: clamp(180px, 30vw, 240px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gallery-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #f67a31;
+      color: white;
+      border: none;
+      padding: clamp(8px, 1.5vw, 10px);
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background 0.2s;
+      z-index: 2;
+    }
+
+    .gallery-btn:hover {
+      background: #d96a28;
+    }
+
+    .gallery-btn:disabled {
+      background: rgba(246, 122, 49, 0.3);
+      cursor: not-allowed;
+    }
+
+    #photoPrevBtn, #illustrationPrevBtn { left: 10px; }
+    #photoNextBtn, #illustrationNextBtn { right: 10px; }
+
+    #photoImage, #illustrationImage {
+      border-radius: 8px;
+      width: 100%;
+      height: clamp(180px, 30vw, 240px);
+      object-fit: contain;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+      display: none;
+      max-width: calc(100% - 40px);
+      max-height: 100%;
+    }
+
+    #description {
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      line-height: 1.6;
+      color: #4b5563;
+      margin-bottom: clamp(0.8rem, 2vw, 1rem);
+      background: #ffffff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .audio-player {
+      display: flex;
+      gap: clamp(0.5rem, 1.5vw, 0.8rem);
+      align-items: center;
+      margin-bottom: clamp(0.8rem, 2vw, 1rem);
+      background: #ffffff;
+      padding: 0.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .audio-player.hidden {
+      display: none;
+    }
+
+    .audio-player button {
+      background: #00ADB5;
+      color: white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+
+    .audio-player button:hover {
+      background: #008c92;
+    }
+
+    .audio-player .progress-bar {
+      flex-grow: 1;
+      height: 5px;
+      background: #e5e7eb;
+      border-radius: 5px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .audio-player .progress {
+      width: 0;
+      height: 100%;
+      background: #00ADB5;
+      transition: width 0.1s linear;
+    }
+
+    .audio-player .time-display {
+      font-size: 0.9rem;
+      color: #1f2937;
+      margin-left: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .audio-player .error-message {
+      color: #dc3545;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      width: 100%;
+    }
+
+    #videoContainer {
+      margin-bottom: clamp(0.8rem, 2vw, 1rem);
+      background: #ffffff;
+      padding: 0.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    #videoPlayer {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #imageModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      flex-direction: column;
+      gap: 1rem;
+      overflow: hidden;
+    }
+
+    #imageModal.visible {
+      display: flex;
+      opacity: 1;
+    }
+
+    #modalImage {
+      max-width: 90vw;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      transform: scale(1);
+      transition: transform 0.2s ease;
+      will-change: transform;
+      position: relative;
+      cursor: grab;
+    }
+
+    #modalImage.dragging {
+      cursor: grabbing;
+    }
+
+    .modal-nav {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .modal-nav-btn {
+      background: #f67a31;
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background 0.2s;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-nav-btn:hover {
+      background: #d96a28;
+    }
+
+    .modal-nav-btn:disabled {
+      background: rgba(246, 122, 49, 0.3);
+      cursor: not-allowed;
+    }
+
+    .hidden { display: none; }
+
+    .custom-pin {
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .custom-pin.hidden {
+      opacity: 0;
+    }
+
+    .custom-pin.highlighted {
+      animation: pulse 1.5s;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .end-pin {
+      width: 20px;
+      height: 20px;
+      background-color: turquoise;
+      border-radius: 50%;
+      cursor: pointer;
+      transform: translate(-10px, -10px);
+    }
+
+    .loading-spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #1e90ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+      z-index: 3;
+    }
+
+    .gallery-container.loading .loading-spinner {
+      display: block;
+    }
+
+    .gallery-container:not(.loading) .loading-spinner {
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @media (max-width: 992px) {
+      #map.shrink { width: calc(100% - min(320px, 50vw)); }
+      #infoPanel {
+        width: min(320px, 50vw);
+        padding: clamp(1rem, 2vw, 1.5rem);
+        border-radius: 8px 0 0 8px;
+      }
+      #photoImage, #illustrationImage { height: clamp(160px, 35vw, 200px); }
+      .gallery-container { min-height: clamp(160px, 35vw, 200px); }
+    }
+
+    @media (max-width: 576px) {
+      #container { flex-direction: column; }
+      #map { height: calc(100vh - 70px); }
+      #map.shrink { width: 100%; height: 50vh; }
+      #infoPanel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: auto;
+        height: 70vh;
+        width: 100%;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+        overflow-y: auto;
+        z-index: 20;
+        transform: translateY(100%);
+        padding: clamp(1rem, 3vw, 1.5rem);
+      }
+      #infoPanel.visible { transform: translateY(0); opacity: 1; }
+      #toggleLabelsBtn {
+        font-size: clamp(0.8rem, 3vw, 0.9rem);
+        padding: 0.4rem 0.8rem;
+        top: 80px;
+        left: 0.5rem;
+      }
+      #panelHeader h2 { font-size: clamp(0.9rem, 3vw, 1rem); }
+      #description { font-size: clamp(0.85rem, 3vw, 0.95rem); }
+      #photoImage, #illustrationImage { height: clamp(140px, 45vw, 180px); }
+      .gallery-container { min-height: clamp(140px, 45vw, 180px); }
+      .gallery-btn { padding: clamp(6px, 2vw, 8px); font-size: clamp(0.8rem, 3vw, 0.9rem); }
+      .section-title { font-size: clamp(0.95rem, 3vw, 1rem); }
+      .custom-pin { width: 32px; height: 32px; }
+      .end-pin { width: 16px; height: 16px; transform: translate(-8px, -8px); }
+      #closeBtn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+      }
+      .audio-player, #description, .gallery-container, #videoContainer {
+        padding: 0.5rem;
+      }
+      #panelHeader h2 {
+        padding-right: 36px;
+      }
+    }
+
+    .mapboxgl-ctrl-geocoder {
+      position: absolute;
+      top: 80px;
+      left: 0.5rem;
+      z-index: 15;
+      width: min(200px, 40vw);
+      font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+    @media (max-width: 576px) {
+      .mapboxgl-ctrl-geocoder {
+        top: 130px;
+        left: 5px;
+        right: 0;
+        margin: 0 auto;
+        width: 80%;
+        min-width: 150px;
+        font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+      }
+
+      .mapboxgl-ctrl-geocoder input {
+        padding: 0.3rem 0.7rem 0.3rem 1.8rem;
+        height: 32px;
+        box-sizing: border-box;
+      }
+
+      .mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--icon-search {
+        left: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    footer {
+      background: var(--footer-bg);
+      color: var(--color-white);
+      padding: 3rem 2rem;
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-logo img {
+      height: 50px;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.5));
+    }
+
+    .footer-links h3,
+    .footer-newsletter h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .footer-links ul li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+      font-size: 1rem;
+      color: #d1d5db;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--color-blue-start);
+    }
+
+    .footer-newsletter input[type="email"] {
+      padding: 0.8rem;
+      width: 100%;
+      border-radius: 50px;
+      border: 1px solid #d1d5db;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--color-white);
+    }
+
+    .footer-newsletter button {
+      background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
+      color: var(--color-white);
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .footer-newsletter button:hover {
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #d1d5db;
+    }
+
+    @media (max-width: 768px) {
+      .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .footer-newsletter input[type="email"],
+      .footer-newsletter button {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-logo">
+      <img src="assets/logo/logo.svg" alt="Maphonic Logo" onerror="this.src='https://via.placeholder.com/150'; this.alt='Logo Placeholder'" />
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" onclick="closeMenu()">Home</a></li>
+      <li><a href="explore-map.html" onclick="closeMenu()">Explore Map</a></li>
+      <li><a href="about-us.html" onclick="closeMenu()">About Us</a></li>
+      <li><a href="contact.html" onclick="closeMenu()">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="wrapper">
+    <div class="content">
+      <button id="toggleLabelsBtn" class="btn-success">Hide Map Labels</button>
+      <div id="container">
+        <div id="map"></div>
+        <aside id="infoPanel" aria-hidden="true" role="region" aria-label="Details Panel">
+          <div id="panelHeader">
+            <h2 id="title">Title</h2>
+            <button id="closeBtn" type="button" aria-label="Close panel"></button>
+          </div>
+          <h3 class="section-title hidden" id="morningAudioTitle">Morning Audio</h3>
+          <div id="morningAudioPlayer" class="audio-player hidden">
+            <button id="morningAudioPlayPause" aria-label="Play or pause morning audio">
+              <i class="fas fa-play"></i>
+            </button>
+            <div class="progress-bar" id="morningAudioProgressBar">
+              <div class="progress" id="morningAudioProgress"></div>
+            </div>
+            <div class="time-display" id="morningAudioTime">0:00 / 0:00</div>
+            <div id="morningAudioError" class="error-message hidden"></div>
+          </div>
+          <h3 class="section-title hidden" id="eveningAudioTitle">Evening Audio</h3>
+          <div id="eveningAudioPlayer" class="audio-player hidden">
+            <button id="eveningAudioPlayPause" aria-label="Play or pause evening audio">
+              <i class="fas fa-play"></i>
+            </button>
+            <div class="progress-bar" id="eveningAudioProgressBar">
+              <div class="progress" id="eveningAudioProgress"></div>
+            </div>
+            <div class="time-display" id="eveningAudioTime">0:00 / 0:00</div>
+            <div id="eveningAudioError" class="error-message hidden"></div>
+          </div>
+          <h3 class="section-title hidden" id="photoTitle">Location Photos</h3>
+          <div id="photoGallery" class="gallery-container hidden">
+            <div class="loading-spinner"></div>
+            <button id="photoPrevBtn" class="gallery-btn" aria-label="Previous photo"><</button>
+            <img id="photoImage" src="" alt="Photo" />
+            <button id="photoNextBtn" class="gallery-btn" aria-label="Next photo">></button>
+          </div>
+          <h3 class="section-title hidden" id="illustrationTitle">Location Illustrations & Posters</h3>
+          <div id="illustrationGallery" class="gallery-container hidden">
+            <div class="loading-spinner"></div>
+            <button id="illustrationPrevBtn" class="gallery-btn" aria-label="Previous illustration"><</button>
+            <img id="illustrationImage" src="" alt="Illustration" />
+            <button id="illustrationNextBtn" class="gallery-btn" aria-label="Next illustration">></button>
+          </div>
+          <h3 class="section-title hidden" id="videoTitle">Location Videos</h3>
+          <div id="videoContainer" class="hidden">
+            <video id="videoPlayer" controls>
+              <source src="" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div id="videoError" class="error-message hidden"></div>
+          </div>
+          <p id="description"></p>
+        </aside>
+      </div>
+      <div id="imageModal">
+        <img id="modalImage" src="" alt="Full-screen image" />
+        <div class="modal-nav">
+          <button id="modalPrevBtn" class="modal-nav-btn" aria-label="Previous image"><</button>
+          <button id="modalNextBtn" class="modal-nav-btn" aria-label="Next image">></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="assets/logo/logo.svg" alt="Maphonic Logo" />
+      </div>
+      <div class="footer-links">
+        <h3>Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="explore-map.html">Explore Map</a></li>
+          <li><a href="about-us.html">About Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-newsletter">
+        <h3>Join Our Newsletter</h3>
+        <input type="email" placeholder="Your email address" aria-label="Email address" />
+        <button type="submit">Subscribe</button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Maphonic 2025, Designed with Love</p>
+    </div>
+  </footer>
+
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js" defer></script>
+  <script src="https://unpkg.com/gsap@3/dist/ScrollTrigger.min.js" defer></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

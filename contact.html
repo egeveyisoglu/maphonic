@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Maphonic | Contact</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --nav-bg: rgba(20, 30, 60, 0.85);
+      --nav-bg-mobile: rgba(20, 30, 60, 0.95);
+      --white: #fff;
+      --blue-start: #1e90ff;
+      --blue-end: #00b7eb;
+      --btn-start: #1e90ff;
+      --btn-end: #00b7eb;
+      --btn-hover-start: #187bcd;
+      --btn-hover-end: #009fd9;
+      --heading-font: "Rubik", sans-serif;
+      --text-font: "Nunito", sans-serif;
+      --section-bg: linear-gradient(135deg, #f5f8ff, #e8f0ff);
+      --footer-bg: linear-gradient(135deg, #141e3c, #1a2a5a);
+      --hero-overlay-bg: rgba(245, 248, 255, 0.7);
+      --hero-text: #2c2c54;
+      --hero-accent: #ff6b6b;
+      --contact-btn: rgb(26, 42, 90);
+      --contact-btn-hover: #008c93;
+      --popup-bg: linear-gradient(135deg, #00ADB5, #00b7eb);
+      --popup-shadow: rgba(0, 173, 181, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-appearance: none;
+    }
+
+        /* Rubik Font Tanımları */
+    @font-face {
+      font-family: 'Rubik';
+      src: url('assets/fonts/Rubik-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      src: url('assets/fonts/Rubik-Medium.ttf') format('truetype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Rubik';
+      src: url('assets/fonts/Rubik-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* Nunito Font Tanımları */
+    @font-face {
+      font-family: 'Nunito';
+      src: url('assets/fonts/Nunito-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Nunito';
+      src: url('assets/fonts/Nunito-Medium.ttf') format('truetype');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Nunito';
+      src: url('assets/fonts/Nunito-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      font-family: var(--text-font);
+      background: #f5f8ff;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    button { cursor: pointer; font-family: var(--text-font); border: none; outline: none; }
+
+    [data-animate] {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    [data-animate].visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 70px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .logo img {
+      height: 45px;
+      transition: transform 0.3s ease;
+    }
+
+    .logo img:hover { transform: scale(1.1); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 20px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1001;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 100%;
+      height: 3px;
+      background: var(--white);
+      border-radius: 3px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(1) {
+      transform: translateY(8.5px) rotate(45deg);
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(3) {
+      transform: translateY(-8.5px) rotate(-45deg);
+    }
+
+    @media (min-width: 769px) {
+      .nav-links {
+        display: flex;
+        flex: 1;
+        justify-content: space-evenly;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .nav-links a {
+        position: relative;
+        color: var(--white);
+        font-size: 1rem;
+        padding: 0.5rem 0;
+        transition: color 0.3s ease;
+        font-family: var(--text-font);
+        font-weight: 400;
+      }
+
+      .nav-links a:hover, .nav-links a.active {
+        color: var(--blue-start);
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -4px;
+        width: 0;
+        height: 2px;
+        background: var(--blue-start);
+        transition: width 0.3s ease, left 0.3s ease;
+      }
+
+      .nav-links a:hover::after, .nav-links a.active::after {
+        left: 0;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+
+      .nav-links {
+        position: fixed;
+        top: 70px;
+        right: 0;
+        width: 250px;
+        height: calc(100vh - 70px);
+        background: var(--nav-bg-mobile);
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 2rem;
+        padding-top: 3rem;
+        transform: translateX(100%);
+        transition: transform 0.4s ease;
+        z-index: 999;
+      }
+
+      .nav-links.open { transform: translateX(0); }
+
+      .nav-links li { width: 100%; text-align: center; }
+
+      .nav-links a {
+        font-size: 1.2rem;
+        color: var(--white);
+        display: block;
+        padding: 0.5rem;
+        font-family: var(--text-font);
+      }
+
+      .nav-links a:hover, .nav-links a.active { color: var(--blue-start); }
+
+      .content { padding-top: 70px; }
+    }
+
+    @media (max-width: 480px) {
+      nav { padding: 0 1rem; }
+      .hamburger { right: 1rem; }
+      .nav-links { width: 200px; }
+      .nav-links a { font-size: 1rem; }
+    }
+
+    .content {
+      padding-top: 70px;
+      min-height: calc(var(--vh, 1vh) * 100);
+      display: flex;
+    }
+
+    .contact-section {
+      display: flex;
+      width: 100%;
+      min-height: calc(var(--vh, 1vh) * 100 - 70px);
+      position: relative;
+    }
+
+    .contact-image {
+      flex: 1;
+      background: url('assets/contact/contact.svg') center center/cover no-repeat;
+      background-position: 39% center;
+      min-height: 300px;
+      position: relative;
+      order: 2;
+    }
+
+    .contact-image::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://via.placeholder.com/600x400') center/cover no-repeat;
+      opacity: 0.5;
+      display: none;
+    }
+
+    .contact-image[style*="background: none"]::before {
+      display: block;
+    }
+
+    .contact-form-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      background: var(--section-bg);
+      order: 1;
+    }
+
+    .contact-form {
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+    }
+
+    .contact-form h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      font-family: var(--heading-font);
+      color: var(--contact-btn);
+      margin-bottom: 1rem;
+    }
+
+    .contact-info {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2rem;
+      gap: 1rem;
+      position: relative;
+    }
+
+    .contact-info div {
+      text-align: center;
+      flex: 1;
+      padding: 0 1.5rem;
+    }
+
+    .contact-info div:first-child {
+      border-right: 1px solid #d1d5db;
+    }
+
+    .contact-info h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      font-family: var(--heading-font);
+      color: rgb(26, 42, 90);
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-info p {
+      font-size: 1rem;
+      color: #333;
+      font-family: var(--text-font);
+    }
+
+    .form-group {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      align-items: center;
+    }
+
+    .form-group input {
+      flex: 1;
+      padding: 0.8rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: var(--text-font);
+      background: rgba(255, 255, 255, 0.9);
+      touch-action: manipulation;
+      height: 44px;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--contact-btn);
+      box-shadow: 0 0 5px var(--popup-shadow);
+    }
+
+    .form-group.phone-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .form-group.phone-group .select-container {
+      position: relative;
+      flex: 0 0 120px;
+    }
+
+    .select2-container .select2-selection--single {
+      height: 44px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      line-height: 44px;
+      font-size: 1rem;
+      font-family: var(--text-font);
+      color: #333;
+      padding-left: 0.8rem;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 44px;
+      width: 26px;
+      right: 0.8rem;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+      border-color: var(--contact-btn) transparent transparent transparent;
+    }
+
+    .select2-container--default .select2-selection--single:focus {
+      outline: none;
+      border-color: var(--contact-btn);
+      box-shadow: 0 0 5px var(--popup-shadow);
+    }
+
+    .form-group.phone-group input[type="tel"] {
+      flex: 1;
+      min-width: 150px;
+      height: 44px;
+    }
+
+    .form-group.message {
+      display: block;
+      position: relative;
+    }
+
+    .form-group.message textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: var(--text-font);
+      background: rgba(255, 255, 255, 0.9);
+      resize: none;
+      height: 150px;
+      overflow-y: auto;
+      touch-action: manipulation;
+    }
+
+    .form-group.message textarea:focus {
+      outline: none;
+      border-color: var(--contact-btn);
+      box-shadow: 0 0 5px var(--popup-shadow);
+    }
+
+    .char-count {
+      position: absolute;
+      bottom: -1.5rem;
+      right: 0.5rem;
+      font-size: 0.85rem;
+      color: #666;
+      font-family: var(--text-font);
+    }
+
+    .contact-form button {
+      background: linear-gradient(135deg, var(--btn-start), var(--btn-end));
+      color: var(--white);
+      padding: 1rem 2.5rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      font-family: var(--text-font);
+      border-radius: 50px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      min-width: 120px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .contact-form button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.4s ease;
+    }
+
+    .contact-form button:hover::before {
+      left: 100%;
+    }
+
+    .contact-form button:hover {
+      background: linear-gradient(135deg, var(--btn-hover-start), var(--btn-hover-end));
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    .contact-form button.loading .btn-text {
+      visibility: hidden;
+    }
+
+    .contact-form button.loading .loader {
+      display: block;
+    }
+
+    .loader {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--white);
+      border-top: 3px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .success-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: var(--popup-bg);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      font-family: var(--text-font);
+      color: var(--white);
+      box-shadow: 0 10px 30px var(--popup-shadow);
+      max-width: 450px;
+      width: 90%;
+      z-index: 2000;
+      opacity: 0;
+      animation: popupFadeIn 0.5s ease-out forwards;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .success-popup .icon {
+      font-size: 3rem;
+      color: var(--white);
+      margin-bottom: 1rem;
+      animation: iconPop 0.5s ease-out;
+    }
+
+    .success-popup h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: var(--heading-font);
+      margin-bottom: 0.5rem;
+    }
+
+    .success-popup p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      opacity: 0.9;
+    }
+
+    .success-popup .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 1.2rem;
+      color: var(--white);
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-popup .close-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1999;
+      opacity: 0;
+      animation: overlayFadeIn 0.5s ease-out forwards;
+    }
+
+    @keyframes popupFadeIn {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes overlayFadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes iconPop {
+      0% { transform: scale(0); }
+      70% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 768px) {
+      .contact-section {
+        flex-direction: column;
+      }
+
+      .contact-image {
+        height: calc(var(--vh, 1vh) * 40);
+        width: 100%;
+        background-size: cover;
+        background-position: 39% center;
+        order: 1;
+      }
+
+      .contact-form-container {
+        padding: 1.5rem;
+        order: 2;
+      }
+
+      .contact-form h2 {
+        font-size: 2rem;
+      }
+
+      .contact-info {
+        flex-direction: row;
+        align-items: center;
+        text-align: center;
+        gap: 0.5rem;
+      }
+
+      .form-group.phone-group {
+        flex-direction: row;
+        flex-wrap: nowrap;
+      }
+
+      .form-group.phone-group > * {
+        flex: 1;
+      }
+
+      .form-group.phone-group .select-container {
+        flex: 0 0 120px;
+      }
+
+      .form-group.phone-group input[type="tel"] {
+        height: 40px;
+      }
+
+      .contact-form button {
+        padding: 0.8rem 1.8rem;
+        font-size: 1rem;
+      }
+
+      .success-popup {
+        max-width: 350px;
+        padding: 1.5rem;
+      }
+
+      .success-popup .icon {
+        font-size: 2.5rem;
+      }
+
+      .success-popup h3 {
+        font-size: 1.3rem;
+      }
+
+      .success-popup p {
+        font-size: 1rem;
+      }
+
+      .success-popup .close-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav { padding: 0 1rem; }
+      .hamburger { right: 1rem; }
+      .nav-links { width: 200px; }
+      .nav-links a { font-size: 1rem; }
+      .contact-form h2 {
+        font-size: 1.8rem;
+      }
+
+      .contact-info {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .contact-info div {
+        padding: 0;
+      }
+
+      .contact-info div:first-child {
+        border-right: none;
+      }
+
+      .contact-info h3 {
+        font-size: 1.1rem;
+      }
+
+      .contact-info p {
+        font-size: 0.9rem;
+      }
+
+      .form-group input,
+      .form-group.message textarea {
+        font-size: 0.9rem;
+        padding: 0.7rem;
+        height: 38px;
+      }
+
+      .form-group.message textarea {
+        height: 120px;
+      }
+
+      .select2-container .select2-selection--single {
+        height: 38px;
+      }
+
+      .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 38px;
+        font-size: 0.9rem;
+      }
+
+      .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px;
+      }
+
+      .contact-form button {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      .form-group.phone-group .select-container {
+        flex: 0 0 90px;
+      }
+
+      .success-popup {
+        max-width: 300px;
+        padding: 1.2rem;
+      }
+
+      .success-popup .icon {
+        font-size: 2rem;
+      }
+
+      .success-popup h3 {
+        font-size: 1.1rem;
+      }
+
+      .success-popup p {
+        font-size: 0.9rem;
+      }
+
+      .success-popup .close-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 0.9rem;
+      }
+
+      .char-count {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 320px) {
+      nav { padding: 0 0.5rem; }
+      .logo img { height: 35px; }
+      .hamburger { right: 0.5rem; width: 25px; height: 18px; }
+      .nav-links { width: 180px; }
+      .nav-links a { font-size: 0.9rem; padding: 0.4rem; }
+      .contact-form h2 {
+        font-size: 1.5rem;
+      }
+
+      .contact-info h3 {
+        font-size: 1rem;
+      }
+
+      .contact-info p {
+        font-size: 0.8rem;
+      }
+
+      .form-group input,
+      .form-group.message textarea {
+        font-size: 0.85rem;
+        padding: 0.6rem;
+        height: 36px;
+      }
+
+      .form-group.message textarea {
+        height: 100px;
+      }
+
+      .select2-container .select2-selection--single {
+        height: 36px;
+      }
+
+      .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 36px;
+        font-size: 0.85rem;
+      }
+
+      .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px;
+      }
+
+      .contact-form button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+      }
+
+      .form-group.phone-group .select-container {
+        flex: 0 0 80px;
+      }
+
+      .success-popup {
+        max-width: 280px;
+        padding: 1rem;
+      }
+
+      .success-popup .icon {
+        font-size: 1.8rem;
+      }
+
+      .success-popup h3 {
+        font-size: 1rem;
+      }
+
+      .success-popup p {
+        font-size: 0.8rem;
+      }
+
+      .success-popup .close-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+      }
+
+      .char-count {
+        font-size: 0.75rem;
+      }
+    }
+
+    footer {
+      background: var(--footer-bg);
+      color: var(--white);
+      padding: 3rem 2rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-logo img { height: 50px; }
+
+    .footer-links h3, .footer-newsletter h3 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      font-family: var(--heading-font);
+    }
+
+    .footer-links ul li { margin-bottom: 0.8rem; }
+
+    .footer-links a {
+      font-size: 1rem;
+      color: #d1d5db;
+      transition: color 0.3s ease;
+      font-family: var(--text-font);
+    }
+
+    .footer-links a:hover { color: var(--blue-start); }
+
+    .footer-newsletter input[type="email"] {
+      padding: 0.8rem;
+      width: 100%;
+      border-radius: 50px;
+      border: 1px solid #d1d5db;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+      font-family: var(--text-font);
+    }
+
+    .footer-newsletter button {
+      background: linear-gradient(135deg, var(--btn-start), var(--btn-end));
+      color: var(--white);
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-family: var(--text-font);
+      transition: transform 0.3s ease;
+    }
+
+    .footer-newsletter button:hover { transform: translateY(-3px); }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #d1d5db;
+      font-family: var(--text-font);
+    }
+
+    @media (max-width: 768px) {
+      .footer-content { grid-template-columns: 1fr; text-align: center; }
+      .footer-logo img { margin: 0 auto; }
+      .footer-links ul { padding: 0; }
+      .footer-newsletter input[type="email"] { font-size: 0.95rem; }
+      .footer-newsletter button { padding: 0.7rem 1.5rem; font-size: 0.95rem; }
+    }
+
+    @media (max-width: 480px) {
+      footer { padding: 2rem 1rem; }
+      .footer-content { gap: 1.5rem; }
+      .footer-links h3, .footer-newsletter h3 { font-size: 1.2rem; }
+      .footer-links a { font-size: 0.9rem; }
+      .footer-bottom { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">
+      <img src="assets/logo/logo.svg" alt="Maphonic Logo" onerror="this.src='https://via.placeholder.com/150'; this.alt='Logo Placeholder'">
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" onclick="closeMenu()">Home</a></li>
+      <li><a href="explore-map.html" onclick="closeMenu()">Explore Map</a></li>
+      <li><a href="about-us.html" onclick="closeMenu()">About Us</a></li>
+      <li><a href="contact.html" onclick="closeMenu()">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="content">
+    <section class="contact-section">
+      <div class="contact-form-container">
+        <div class="contact-form">
+          <h2>Contact Us</h2>
+          <div class="contact-info">
+            <div>
+              <h3>E-mail</h3>
+              <p>maphonic@gmail.com</p>
+            </div>
+            <div>
+              <h3>Phone Number</h3>
+              <p>+90 500 000 00 00</p>
+            </div>
+          </div>
+          <form id="contactForm">
+            <div class="form-group">
+              <input type="text" placeholder="Name" aria-label="Name" required id="name">
+            </div>
+            <div class="form-group">
+              <input type="email" placeholder="E-mail" aria-label="E-mail" required id="email">
+            </div>
+            <div class="form-group phone-group">
+              <div class="select-container">
+                <select aria-label="Country Code" required id="country-code" class="country-code-select">
+                  <option value="" disabled selected>Code</option>
+                  <option value="+90">+90</option>
+                  <option value="+1">+1</option>
+                  <option value="+44">+44</option>
+                </select>
+              </div>
+              <input type="tel" placeholder="Number" aria-label="Phone Number" required id="phone">
+            </div>
+            <div class="form-group message">
+              <textarea placeholder="Message" aria-label="Message" required id="message" maxlength="500"></textarea>
+              <span class="char-count" id="charCount">500/500</span>
+            </div>
+            <button type="submit" id="submitButton">
+              <span class="btn-text">Submit</span>
+              <span class="loader"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="contact-image" onerror="this.style.background='none';"></div>
+    </section>
+  </div>
+
+  <div class="popup-overlay" id="popupOverlay"></div>
+  <div class="success-popup" id="successPopup">
+    <button class="close-btn" id="closePopup">×</button>
+    <div class="icon">✔</div>
+    <h3>Message Sent!</h3>
+    <p>Your message has been successfully submitted.<br>We'll get back to you soon!</p>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="assets/logo/logo.svg" alt="Maphonic Logo" onerror="this.src='https://via.placeholder.com/150'; this.alt='Logo Placeholder'">
+      </div>
+      <div class="footer-links">
+        <h3>Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="explore-map.html">Explore Map</a></li>
+          <li><a href="about-us.html">About Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-newsletter">
+        <h3>Join Our Newsletter</h3>
+        <input type="email" placeholder="Your email address" aria-label="Email address">
+        <button type="button">Subscribe</button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Maphonic 2025, Designed with Love</p>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js" defer></script>
+  <script src="https://unpkg.com/gsap@3/dist/ScrollTrigger.min.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Active Nav Link
+      const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      document.querySelectorAll('.nav-links a').forEach(link => {
+        if (link.getAttribute('href') === currentPage) link.classList.add('active');
+      });
+
+      // Hamburger Menu
+      const hamburger = document.getElementById("hamburger");
+      const navLinks = document.getElementById("navLinks");
+      let isOpen = false;
+
+      hamburger.addEventListener("click", () => {
+        isOpen = !isOpen;
+        navLinks.classList.toggle("open");
+        hamburger.setAttribute("aria-expanded", isOpen);
+      });
+
+      document.addEventListener("click", e => {
+        if (isOpen && !navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+          isOpen = false;
+          navLinks.classList.remove("open");
+          hamburger.setAttribute("aria-expanded", false);
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 768 && isOpen) {
+          isOpen = false;
+          navLinks.classList.remove("open");
+          hamburger.setAttribute("aria-expanded", false);
+        }
+      });
+
+      // Select2 Initialization
+      $('.country-code-select').select2({
+        minimumResultsForSearch: Infinity,
+        width: '100%'
+      });
+
+      // Dynamic viewport height
+      function setVh() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      }
+
+      window.addEventListener('resize', setVh);
+      window.addEventListener('load', setVh);
+      setVh();
+
+      // Form submission and popup
+      const form = document.getElementById('contactForm');
+      const submitButton = document.getElementById('submitButton');
+      const successPopup = document.getElementById('successPopup');
+      const popupOverlay = document.getElementById('popupOverlay');
+      const closePopup = document.getElementById('closePopup');
+
+      function showPopup() {
+        popupOverlay.style.display = 'block';
+        successPopup.style.display = 'block';
+      }
+
+      function hidePopup() {
+        popupOverlay.style.display = 'none';
+        successPopup.style.display = 'none';
+      }
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        submitButton.classList.add('loading');
+        submitButton.disabled = true;
+
+        setTimeout(() => {
+          submitButton.classList.remove('loading');
+          submitButton.disabled = false;
+          showPopup();
+          form.reset();
+          $('.country-code-select').val('').trigger('change');
+          document.getElementById('charCount').textContent = '500/500';
+          
+          setTimeout(hidePopup, 5000);
+        }, 1500);
+      });
+
+      closePopup.addEventListener('click', hidePopup);
+      popupOverlay.addEventListener('click', hidePopup);
+
+      // Character counter
+      const messageInput = document.getElementById('message');
+      const charCount = document.getElementById('charCount');
+      const maxLength = 500;
+
+      messageInput.addEventListener('input', () => {
+        const remaining = maxLength - messageInput.value.length;
+        charCount.textContent = `${remaining}/${maxLength}`;
+      });
+    });
+
+    function closeMenu() {
+      const navLinks = document.getElementById("navLinks");
+      const hamburger = document.getElementById("hamburger");
+      navLinks.classList.remove("open");
+      hamburger.setAttribute("aria-expanded", false);
+    }
+  </script>
+</body>
+</html>
