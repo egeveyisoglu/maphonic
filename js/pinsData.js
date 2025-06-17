@@ -15,7 +15,7 @@
         ],
         morningAudio: "assets/explore-map/audios/asim-street/asim-street-audio-1.mp3",
         eveningAudio: null,
-        video: "assets/explore-map/videos/kadikoy_video.mp4",
+        video: null,
         endPoint: null
       },
       {
